@@ -48,6 +48,6 @@ The RadarChart should be created inside a python block, on the screen you want t
     - max_value: int - The maximum value any point can have
     - data_colour: tuple - (R, G, B, A) value for the data
     - line_colour: tuple - (R, G, B, A) value for the references lines
-    background_colour: tuple - (R, G, B, A) value for the chart's background
+    - background_colour: tuple - (R, G, B, A) value for the chart's background
     - show_lines: bool - True for visible reference lines 
     - animated: bool - True if each point on the chart should animate from zero to the current value
