@@ -1,4 +1,4 @@
-![Screenshot](/screenshots/screenshot.png?raw=true "Screenshot")
+![Screenshot](/screenshot0001.png?raw=true "Screenshot")
 
 #Radar Chart for Ren'Py
 Ren'Py Displayable for plotting data onto a radar chart
