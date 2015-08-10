@@ -24,7 +24,7 @@ To create a chart, first you'll need some data to plot, such as:
     SMART_VALUE = 67
     TOUGH_VALUE = 100
 
-The data can be created anytime after the start label.
+The data can be created inside a label.
 
 Next, you'll need a RadarChart instance:
 
@@ -38,7 +38,7 @@ Next, you'll need a RadarChart instance:
                     show_lines=True, 
                     animated=True)
 
-The RadarChart should be created inside a python block, on the screen you want to display it on.
+The RadarChart should be created inside a python block, inside a label.
 
 ###Documentation
 - class RadarChart(size, values, max_value, data_colour, line_colour, background_colour, show_lines, animated)

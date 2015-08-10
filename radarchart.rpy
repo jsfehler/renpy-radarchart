@@ -75,10 +75,13 @@ init -1500 python:
             self.size = size
             
             # Origin point is the dead center of the chart.
-            origin = size * 0.5, size * 0.5
+            self.origin = size * 0.5, size * 0.5
             
             # Number of points in the chart is determined by the number of values.
+            self._values = values 
             self.number_of_points = len(values)  
+   
+            self.max_value = max_value
    
             # Set colour of the chart's data polygon
             try:
@@ -104,23 +107,25 @@ init -1500 python:
             self.animated = animated
             self.speed = speed
       
-            # Convert values into percentage
-            c_values = []
-            max_value = max_value
-            for value in values:
-                c_values.append(float(value)/float(max_value))
-   
-            # Calculate endpoints
-            endpoints = self.get_chart_endpoints()
-
-            # Endpoints with offset for the origin point. The physical length of each line in the chart
-            max_coordinates = [Point2D(t.x + origin[0], t.y + origin[1]) for t in endpoints]
+            self._generate_chart_data()
+        
+        def _generate_chart_data(self):
+            """Perform all the steps necessary to create the chart data."""
 
             # Centre point of the chart
-            origin_point = Point2D(origin[0], origin[1])
+            origin_point = Point2D(self.origin[0], self.origin[1])
+            
+            # Convert values into percentage
+            c_values = [(float(value)/float(self.max_value)) for value in self.values]
+   
+            # Calculate endpoints
+            endpoints = self._get_chart_endpoints()
+
+            # Endpoints with offset for the origin point. The physical length of each line in the chart
+            max_coordinates = [endpoint + origin_point for endpoint in endpoints]
 
             # Data values
-            values_length = [Point2D(endpoints[x].x * c_values[x] + origin[0], endpoints[x].y * c_values[x] + origin[1]) for x in range(len(endpoints))]
+            values_length = [Point2D(endpoints[x].x * c_values[x] + self.origin[0], endpoints[x].y * c_values[x] + self.origin[1]) for x in range(len(endpoints))]
 
             # Path for the chart's border
             self.chart = []
@@ -145,7 +150,18 @@ init -1500 python:
             # Used to create animation effect
             self.start_points = [{"a": origin_point} for point in self.data_polygon]
 
-        def get_chart_endpoints(self):
+        @property
+        def values(self):
+            return self._values
+            
+        @values.setter
+        def values(self, val):
+            """Whenever new values are set, regenerate the chart data."""
+            self._values = val
+            self.number_of_points = len(self._values)
+            self._generate_chart_data()
+            
+        def _get_chart_endpoints(self):
             """
             Calculate the endpoint for each piece of data on the chart.
             
