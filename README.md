@@ -1,15 +1,15 @@
 ![Screenshot](/screenshot0001.png?raw=true "Screenshot")
 
-#Radar Chart for Ren'Py
+# Radar Chart for Ren'Py
 Ren'Py Displayable for plotting data onto a radar chart
 
 - radarchart.rpy: Contains the RadarChart class. Drop this file into a Ren'Py project directory
 - script.rpy: Example usage situation.
 
-###Demo
+### Demo
 Just drop script.rpy and radarchart.rpy into a new Ren'Py project's 'game' directory and try it out.
 
-###Getting Started
+### Getting Started
 This guide assumes you have basic familiarity with Ren'Py labels and screens.
 
 ##### Necessary Files:
@@ -24,7 +24,7 @@ To create a chart, first you'll need some data to plot, such as:
     SMART_VALUE = 67
     TOUGH_VALUE = 100
 
-The data can be created inside a label.
+The data should be created inside a label.
 
 Next, you'll need a RadarChart instance:
 
@@ -36,7 +36,8 @@ Next, you'll need a RadarChart instance:
                     line_colour=(153, 153, 153, 255), 
                     background_colour=(255, 255, 255, 255), 
                     show_lines=True, 
-                    animated=True)
+                    animated=True,
+                    speed=1)
 
 The RadarChart should be created inside a python block, inside a label.
 
@@ -51,3 +52,4 @@ The RadarChart should be created inside a python block, inside a label.
     - background_colour: tuple - (R, G, B, A) value for the chart's background
     - show_lines: bool - True for visible reference lines 
     - animated: bool - True if each point on the chart should animate from zero to the current value
+    - speed: int - The rate at which an animated chart's values should expand out
