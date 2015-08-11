@@ -26,9 +26,14 @@ To create a chart, first you'll need some data to plot, such as:
 
 The data should be created inside a label.
 
-Next, you'll need a RadarChart instance:
+A chart's data should then be gathered in a tuple:
 
     plot_values = (COOL_VALUE, BEAUTY_VALUE, CUTE_VALUE, SMART_VALUE, TOUGH_VALUE)
+
+The number of items in the tuple will determine how many points the RadarChart has.
+
+Next, you'll need a RadarChart instance:
+
     rc = RadarChart(size=200,  
                     values=plot_values, 
                     max_value=255, 
@@ -40,6 +45,20 @@ Next, you'll need a RadarChart instance:
                     speed=1)
 
 The RadarChart should be created inside a python block, inside a label.
+
+##### Updating a Radar Chart
+
+To update or change the values in a RadarChart object, simply assign RadarChart.values a new tuple. 
+
+For example, if COOL_VALUE has increased:
+
+    COOL_VALUE = 210
+    rc.values = (COOL_VALUE, BEAUTY_VALUE, CUTE_VALUE, SMART_VALUE, TOUGH_VALUE)
+
+If the chart needs a new point:
+
+    SEXY_VALUE = 66
+    rc.values = (COOL_VALUE, BEAUTY_VALUE, CUTE_VALUE, SMART_VALUE, TOUGH_VALUE, SEXY_VALUE) 
 
 ###Documentation
 - class RadarChart(size, values, max_value, data_colour, line_colour, background_colour, show_lines, animated)
