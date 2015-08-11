@@ -22,8 +22,7 @@
 init -1500 python:
     import copy
     import math
-
-    
+   
     class Point2D(object):
         """
         Every point in a RadarChart is stored as a Point2D object.
@@ -37,7 +36,7 @@ init -1500 python:
         
         def __sub__(self, other):
             return Point2D(self.x - other.x, self.y - other.y) 
-        
+            
         def magnitude(self):
             u = self.x * self.x
             v = self.y * self.y
@@ -58,7 +57,20 @@ init -1500 python:
             return Point2D(x, y)
 
 
-    class RadarChart(renpy.Displayable):        
+    class ResetChartAnimation(Action):
+        """
+        For all the Charts given as arguments, regenerate their chart data.
+        This allows the animation to replay.
+        """
+        def __init__(self, *args):
+            self.radar_charts = args 
+        
+        def __call__(self, *args):
+            for item in self.radar_charts:
+                item._generate_chart_data()
+            
+            
+    class RadarChart(renpy.Displayable):
         def __init__(self, 
                      size=0,  
                      values=None,
@@ -74,13 +86,17 @@ init -1500 python:
             # Width and Height of the RadarChart must be equal.
             self.size = size
             
-            # Origin point is the dead center of the chart.
+            # Origin point is the centre of the chart.
             self.origin = size * 0.5, size * 0.5
+            
+            # Point2D representing the centre point of the chart
+            self.origin_point = Point2D(self.origin[0], self.origin[1])            
             
             # Number of points in the chart is determined by the number of values.
             self._values = values 
             self.number_of_points = len(values)  
    
+            # The largest number a value can have.
             self.max_value = max_value
    
             # Set colour of the chart's data polygon
@@ -105,16 +121,29 @@ init -1500 python:
  
             # Is the chart animated?
             self.animated = animated
+            
+            # Rate at which the animated chart fills up
             self.speed = speed
       
+            # Generate the chart data from the values
             self._generate_chart_data()
-        
+     
+        @property
+        def values(self):
+            return self._values
+            
+        @values.setter
+        def values(self, val):
+            """
+            Whenever new values are set, regenerate the chart data.
+            """
+            self._values = val
+            self.number_of_points = len(self._values)
+            self._generate_chart_data()
+     
         def _generate_chart_data(self):
             """Perform all the steps necessary to create the chart data."""
 
-            # Centre point of the chart
-            origin_point = Point2D(self.origin[0], self.origin[1])
-            
             # Convert values into percentage
             c_values = [(float(value)/float(self.max_value)) for value in self.values]
    
@@ -122,7 +151,7 @@ init -1500 python:
             endpoints = self._get_chart_endpoints()
 
             # Endpoints with offset for the origin point. The physical length of each line in the chart
-            max_coordinates = [endpoint + origin_point for endpoint in endpoints]
+            max_coordinates = [endpoint + self.origin_point for endpoint in endpoints]
 
             # Data values
             values_length = [Point2D(endpoints[x].x * c_values[x] + self.origin[0], endpoints[x].y * c_values[x] + self.origin[1]) for x in range(len(endpoints))]
@@ -138,7 +167,7 @@ init -1500 python:
 
             # Path for the reference lines inside the chart
             for item in max_coordinates:
-                self.chart.append({"a":origin_point, "b":item})
+                self.chart.append({"a":self.origin_point, "b":item})
                 
             # Path for the data plotted
             self.data_polygon = []
@@ -148,18 +177,7 @@ init -1500 python:
  
             # Path for the origin
             # Used to create animation effect
-            self.start_points = [{"a": origin_point} for point in self.data_polygon]
-
-        @property
-        def values(self):
-            return self._values
-            
-        @values.setter
-        def values(self, val):
-            """Whenever new values are set, regenerate the chart data."""
-            self._values = val
-            self.number_of_points = len(self._values)
-            self._generate_chart_data()
+            self.start_points = [{"a": self.origin_point} for point in self.data_polygon]
             
         def _get_chart_endpoints(self):
             """
@@ -212,29 +230,30 @@ init -1500 python:
                 self.draw_polygon(render, at, st, self.data_polygon, self.data_colour)
             
             else:
-                acceleration = self.speed * st
                 for x in range(len(self.start_points)):
                     # Only keep moving if we haven't reached the endpoint
-                    if float(self.start_points[x]['a'].x) < float(self.data_polygon[x]['a'].x):
-                        # Calculates movement of animated data
-                        target_vector = []
-                        for x in range (len(self.start_points)):
-                            p2d = self.data_polygon[x]['a'] - self.start_points[x]['a']
-                            target_vector.append(p2d)
-                          
-                        # Update start points to new position  
-                        for x in range (len(target_vector)):
-                            move_vector = target_vector[x].normalize(acceleration)
-                            p2d = self.start_points[x]['a'] + move_vector
-                            
-                            # Replace start points with new start points
-                            self.start_points[x]['a'] = p2d
-                        
+                        if self.start_points[x]['a'].magnitude() != self.data_polygon[x]['a'].magnitude():
+                            # Calculates movement of animated data
+                            target_vector = []
+                            for x in range (len(self.start_points)):
+                                p2d = self.data_polygon[x]['a'] - self.start_points[x]['a']
+                                
+                                target_vector.append(p2d)
+                              
+                            # Update start points to new position  
+                            for x in range (len(target_vector)):
+                                acceleration = (target_vector[x].magnitude() / self.size) * self.speed
+                                move_vector = target_vector[x].normalize(acceleration)
+                                p2d = self.start_points[x]['a'] + move_vector
+                                
+                                # Replace start points with new start points
+                                self.start_points[x]['a'] = p2d
+
                 self.draw_polygon(render, at, st, self.start_points, self.data_colour)  
 
                 # Only need to redraw if chart is animated
                 renpy.redraw(self, 0)
-        
+                
             # Draws the outline shape and the lines    
             if self.show_lines:
                 self.draw_lines(render, at, st)

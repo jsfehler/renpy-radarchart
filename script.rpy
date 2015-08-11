@@ -14,8 +14,8 @@
         xpos 100
         ypos 250
 
-    textbutton "Return" action Return() xalign .90 yalign .90
-        
+    textbutton "Return" action [ResetChartAnimation(rc, rc2, rc3), Return()] xalign .99 yalign .99
+
 # Game starts here
 label start:
     python:
@@ -58,24 +58,26 @@ label start:
                         background_colour=(255, 255, 255, 255), 
                         show_lines=True, 
                         animated=True,
-                        speed=1)
+                        speed=2)
         
+        # No Animation
         rc2 = RadarChart(size=200, 
                          values=plot_values_2, 
                          max_value=350, 
                          data_colour=(200, 200, 100, 255), 
                          line_colour=(0, 0, 0, 255), 
                          background_colour=(155, 55, 80, 255), 
-                         show_lines=False, 
+                         show_lines=True, 
                          animated=False)
         
+        # No lines
         rc3 = RadarChart(size=300, 
                          values=plot_values_3, 
                          max_value=350, 
                          data_colour=(50, 100, 100, 255), 
                          line_colour=(0, 0, 0, 255), 
                          background_colour=(115, 155, 80, 255), 
-                         show_lines=True, 
+                         show_lines=False, 
                          animated=True,
                          speed=6)        
         
@@ -89,11 +91,11 @@ label start:
         BEAUTY_VALUE = 143
         CUTE_VALUE = 110
         SMART_VALUE = 90
-        TOUGH_VALUE = 255
+        TOUGH_VALUE = 245
 
         plot_values = (COOL_VALUE, BEAUTY_VALUE, CUTE_VALUE, SMART_VALUE, TOUGH_VALUE)
         rc.values = plot_values
+        
+    "Inside the script.rpy, you'll see that before this line we changed the values for one of the Radar Plots."
     
     call screen radarChart
-    
-    #TODO: Example of the radar chart changing over the course of the game
