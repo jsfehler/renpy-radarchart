@@ -62,7 +62,7 @@ If the chart needs a new point:
 
 ##### Resetting chart animations
 
-After a chart's animations have played, they won't replay until the data has changed. If you want the animation to play whenever the screen is opened, an Action called ResetChartAnimation can be attached to a button. As arguments, it takes whichever charts need their animations reset. Using thid action causes the charts to replay the next time the screen is displayed. 
+After a chart's animations have played, they won't replay until the data has changed. If you want the animation to play whenever the screen is opened, an Action called ResetChartAnimation can be attached to a button. As arguments, it takes whichever charts need their animations reset. Using this action causes the charts to replay the next time the screen is displayed. 
 
 This Action can be attached to a "Close" button, for example:
 
@@ -81,6 +81,13 @@ This Action can be attached to a "Close" button, for example:
     - animated: bool - True if each point on the chart should animate from zero to the current value
     - speed: int - The rate at which an animated chart's values should expand out
     
--class ResetChartAnimation(*args)
+- class ResetChartAnimation(*args)
 
-    -*args: RadarChart instances
+    - *args: RadarChart instances
+    
+###License & Usage
+Everything here is under the MIT license, just like Ren'Py. Do whatever you want with it.
+
+If you use this in a commercial game, I'd appreciate getting credit for it.
+
+If you need any sort of new feature and/or enhancement, create a new issue and I'll see what I can do.
