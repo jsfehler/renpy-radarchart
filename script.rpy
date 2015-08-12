@@ -14,6 +14,8 @@
         xpos 100
         ypos 250
 
+    # ResetChartAnimation must be called with all the RadarCharts as arguments.
+    # This allows the animations to reset and replay the next time the screen containing the charts is opened.
     textbutton "Return" action [ResetChartAnimation(rc, rc2, rc3), Return()] xalign .99 yalign .99
 
 # Game starts here
@@ -65,7 +67,7 @@ label start:
                          values=plot_values_2, 
                          max_value=350, 
                          data_colour=(200, 200, 100, 255), 
-                         line_colour=(0, 0, 0, 255), 
+                         line_colour=(0, 0, 0, 255),
                          background_colour=(155, 55, 80, 255), 
                          show_lines=True, 
                          animated=False)

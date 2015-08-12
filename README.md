@@ -60,6 +60,14 @@ If the chart needs a new point:
     SEXY_VALUE = 66
     rc.values = (COOL_VALUE, BEAUTY_VALUE, CUTE_VALUE, SMART_VALUE, TOUGH_VALUE, SEXY_VALUE) 
 
+##### Resetting chart animations
+
+After a chart's animations have played, they won't replay until the data has changed. If you want the animation to play whenever the screen is opened, an Action called ResetChartAnimation can be attached to a button. As arguments, it takes whichever charts need their animations reset. Using thid action causes the charts to replay the next time the screen is displayed. 
+
+This Action can be attached to a "Close" button, for example:
+
+    textbutton "Close Menu" action [ResetChartAnimation(rc, rc2, rc3), Return()] xalign .99 yalign .99
+
 ###Documentation
 - class RadarChart(size, values, max_value, data_colour, line_colour, background_colour, show_lines, animated)
 
@@ -72,3 +80,7 @@ If the chart needs a new point:
     - show_lines: bool - True for visible reference lines 
     - animated: bool - True if each point on the chart should animate from zero to the current value
     - speed: int - The rate at which an animated chart's values should expand out
+    
+-class ResetChartAnimation(*args)
+
+    -*args: RadarChart instances
