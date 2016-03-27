@@ -47,7 +47,9 @@ init -1500 python:
             return Point2D((self.x / vmag) * factor, (self.y / vmag) * factor)
   
         def rotate(self, angle):
-            """Rotates the point around the X and Y axis by the given angle in degrees."""         
+            """
+            Rotates the point around the X and Y axis by the given angle in degrees.
+            """
             rad = angle * math.pi / 180
             cos_angle = math.cos(rad)
             sin_angle = math.sin(rad)
@@ -142,15 +144,17 @@ init -1500 python:
             self._generate_chart_data()
      
         def _generate_chart_data(self):
-            """Perform all the steps necessary to create the chart data."""
+            """
+            Perform all the steps necessary to create the chart data.
+            """
 
             # Convert values into percentage
-            c_values = [(float(value)/float(self.max_value)) for value in self.values]
+            c_values = [(float(value) / float(self.max_value)) for value in self.values]
    
             # Calculate endpoints
             endpoints = self._get_chart_endpoints()
 
-            # Endpoints with offset for the origin point. The physical length of each line in the chart
+            # Endpoints with offset for the origin point. The physical length of each line in the chart.
             max_coordinates = [endpoint + self.origin_point for endpoint in endpoints]
 
             # Data values
@@ -158,9 +162,20 @@ init -1500 python:
 
             # Path for the chart's border
             self.chart = []
-            for x in range(self.number_of_points-1):
-                self.chart.append({"a":max_coordinates[x], "b":max_coordinates[x+1]})
-            self.chart.append({"a":max_coordinates[self.number_of_points-1], "b":max_coordinates[0]})
+            for x in range(self.number_of_points - 1):
+                self.chart.append(
+                    {
+                        "a":max_coordinates[x],
+                        "b":max_coordinates[x + 1]
+                    }
+                )
+
+            self.chart.append(
+                {
+                    "a":max_coordinates[self.number_of_points - 1],
+                    "b":max_coordinates[0]
+                }
+            )
 
             # Path for the chart's background polygon
             self.chart_polygon = copy.copy(self.chart)
@@ -171,9 +186,19 @@ init -1500 python:
                 
             # Path for the data plotted
             self.data_polygon = []
-            for x in range(self.number_of_points-1):
-                self.data_polygon.append({"a":values_length[x], "b":values_length[x+1]})  
-            self.data_polygon.append ({"a":values_length[self.number_of_points-1], "b":values_length[0]})
+            for x in range(self.number_of_points - 1):
+                self.data_polygon.append(
+                    {
+                        "a":values_length[x],
+                        "b":values_length[x + 1]
+                    }
+                )
+            self.data_polygon.append (
+                {
+                    "a":values_length[self.number_of_points - 1],
+                    "b":values_length[0]
+                }
+            )
  
             # Path for the origin
             # Used to create animation effect
@@ -205,13 +230,25 @@ init -1500 python:
             
             return endpoints
                 
-        def draw_lines(self, render, at, st):      
-            # Draw to create the Radar Chart's grid.
+        def _draw_lines(self, render, at, st):
+            """
+            Draws the chart's grid.
+            Probably useless if called outside a render function.
+            """
             shape = render.canvas()
             for line in self.chart:
-                shape.aaline(self.line_colour, (line['a'].x, line['a'].y), (line['b'].x, line['b'].y))
+                shape.aaline(
+                    self.line_colour,
+                    (line['a'].x, line['a'].y),
+                    (line['b'].x, line['b'].y)
+                )
             
         def draw_polygon(self, render, at, st, polygon, color):
+            """
+            Draws the polygon that represents the chart data.
+            Probably useless if called outside a render function.
+            """
+
             # Collect coordinates for a polygon
             points = [(point['a'].x, point['a'].y) for point in polygon]
          
@@ -223,11 +260,23 @@ init -1500 python:
             render = renpy.Render(self.size, self.size)
             
             # Draws the background
-            self.draw_polygon(render, at, st, self.chart_polygon, self.background_colour) 
+            self.draw_polygon(
+                render,
+                at,
+                st,
+                self.chart_polygon,
+                self.background_colour
+            )
             
             # Draws the data   
             if not self.animated:
-                self.draw_polygon(render, at, st, self.data_polygon, self.data_colour)
+                self.draw_polygon(
+                    render,
+                    at,
+                    st,
+                    self.data_polygon,
+                    self.data_colour
+                )
             
             else:
                 for x in range(len(self.start_points)):
@@ -249,13 +298,19 @@ init -1500 python:
                                 # Replace start points with new start points
                                 self.start_points[x]['a'] = p2d
 
-                self.draw_polygon(render, at, st, self.start_points, self.data_colour)  
+                self.draw_polygon(
+                    render,
+                    at,
+                    st,
+                    self.start_points,
+                    self.data_colour
+                )
 
                 # Only need to redraw if chart is animated
                 renpy.redraw(self, 0)
                 
             # Draws the outline shape and the lines    
             if self.show_lines:
-                self.draw_lines(render, at, st)
+                self._draw_lines(render, at, st)
         
             return render
