@@ -79,27 +79,19 @@ init -1500 python:
    
             # The largest number a value can have.
             self.max_value = max_value
-   
-            # Set colour of the chart's data polygon
-            try:
-                self.data_colour = color(data_color)
-            except:
-                self.data_colour = data_colour
 
+            # Should lines be drawn or not?
             self.show_lines = show_lines
-                
+
+            # Set colour of the chart's data polygon
+            self.data_colour = color(data_colour)
+
             # Set colour for the chart's lines
-            try:
-                self.line_colour = color(line_colour)
-            except:
-                self.line_colour = line_colour
- 
+            self.line_colour = color(line_colour)
+
             # Set colour for the chart's background
-            try:
-                self.background_colour = color(background_colour)
-            except:
-                self.background_colour = background_colour
- 
+            self.background_colour = color(background_colour)
+
             # Is the chart animated?
             self.animated = animated
             
