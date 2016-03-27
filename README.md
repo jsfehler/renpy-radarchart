@@ -34,15 +34,17 @@ The number of items in the tuple will determine how many points the RadarChart h
 
 Next, you'll need a RadarChart instance:
 
-    rc = RadarChart(size=200,  
-                    values=plot_values, 
-                    max_value=255, 
-                    data_colour=(100, 200, 100, 125), 
-                    line_colour=(153, 153, 153, 255), 
-                    background_colour=(255, 255, 255, 255), 
-                    show_lines=True, 
-                    animated=True,
-                    speed=1)
+    rc = RadarChart(
+        size=200,
+        values=plot_values,
+        max_value=255,
+        data_colour=(100, 200, 100, 125),
+        line_colour=(153, 153, 153, 255),
+        background_colour=(255, 255, 255, 255),
+        show_lines=True,
+        animated=True,
+        speed=1
+    )
 
 The RadarChart should be created inside a python block, inside a label.
 
@@ -90,4 +92,4 @@ Everything here is under the MIT license, just like Ren'Py. Do whatever you want
 
 If you use this in a commercial game, I'd appreciate getting credit for it.
 
-If you need any sort of new feature and/or enhancement, create a new issue and I'll see what I can do.
+If you need any sort of new feature and/or enhancement, create a new issue on Github and I'll see what I can do.
