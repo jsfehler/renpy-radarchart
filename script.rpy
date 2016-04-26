@@ -117,7 +117,7 @@ label start:
         LIME_VALUE = 82
         POTATO_VALUE = 333
         
-        plot_values_2 = (
+        plot_values_2 = [
             GRAPE_VALUE,
             APPLE_VALUE,
             ORANGE_VALUE,
@@ -125,7 +125,7 @@ label start:
             LEMON_VALUE,
             LIME_VALUE,
             POTATO_VALUE
-        )
+        ]
 
         LION_VALUE = 200
         TIGER_VALUE = 110
@@ -136,7 +136,7 @@ label start:
         EAGLE_VALUE = 333
         FALCON_VALUE = 111
         
-        plot_values_3 = (
+        plot_values_3 = [
             LION_VALUE,
             TIGER_VALUE,
             BEAR_VALUE,
@@ -145,7 +145,7 @@ label start:
             CHEETAH_VALUE,
             EAGLE_VALUE,
             FALCON_VALUE
-        )
+        ]
 
         # Create RadarChart objects
 

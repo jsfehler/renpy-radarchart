@@ -159,9 +159,9 @@ init -1500 python:
             Returns:
                 list
             """
-            for v in self._values:
-                if v > self.max_value:
-                    v = self.max_value
+            for index, value in enumerate(self._values):
+                if value > self.max_value:
+                    self._values[index] = self.max_value
             return self._values
 
         @property
