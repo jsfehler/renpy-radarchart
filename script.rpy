@@ -1,6 +1,4 @@
-﻿# SCREENS
-
-# Example Selection Menu
+﻿# Example Selection Menu
 screen example_select:
     window:
         xalign 0.5
@@ -12,101 +10,14 @@ screen example_select:
             textbutton "ATL Transforms" xfill True action Jump("example_three")
             textbutton "Updating Values" xfill True action Jump("example_four")
 
+
 label example_select:
     call screen example_select
 
-# Example Screen 1: Lines & Borders
-screen radarChart_lines:
 
-    text "Default" xpos 20 ypos 20
-    add default:
-        xpos 50
-        ypos 50
-
-    text "No Data Border" xpos 270 ypos 20
-    add no_data_outline:
-        xpos 300
-        ypos 50
-
-    text "No Borders, No Spokes" xpos 530 ypos 20
-    add no_outline:
-        xpos 560
-        ypos 50
-        
-    text "No Spokes" xpos 100 ypos 270
-    add no_spokes:
-        xpos 100
-        ypos 300
-        
-    text "Borders, Spokes, & Webs" xpos 400 ypos 270
-    add spider_web_partial:
-        xpos 400
-        ypos 300
-        
-    textbutton "Return" action Return() xalign .99 yalign .99
-
-# Example Screen 2: Labels
-screen radarChart_labels:
-
-    text "Text Labels" xpos 20 ypos 20
-    add label_chart:
-        xpos 120
-        ypos 100
-
-    text "Image Labels" xpos 420 ypos 20
-    add label_chart_images:
-        xpos 500
-        ypos 100
-
-    textbutton "Return" action Return() xalign .99 yalign .99
-
-# Example Screen 2b: Points
-screen radarChart_points:
-    text "Points" xpos 20 ypos 20  
-    add points_chart:
-        xpos 100
-        ypos 100
-
-    textbutton "Return" action Return() xalign .99 yalign .99
-
-
-# Example Screen 3: ATL Transforms
-screen radarChart_transforms:
-
-    # When splitting up the pieces of a RadarChart,
-    # it helps to put them inside a frame.
-    text "Animated Points" xpos 20 ypos 20
-    frame:
-        background None
-        xysize (200, 200)
-        xpadding 0
-        ypadding 0
-        xpos 50
-        ypos 50
-        add animated_points # The RadarChart
-        add animated_points.chart_points at moving_points # The RadarChart's points, with a Transform
-
-    # RadarChart where all the labels are split
-
-    text "Multiple Transforms" xpos 370 ypos 20
-    frame:
-        background None
-        xysize (200, 200)
-        xpadding 0
-        ypadding 0
-        xpos 400
-        ypos 150
-        add animated_spider_web.chart_base at spinner_base
-        add animated_spider_web.chart_data at spinner_data
-        add animated_spider_web.chart_lines at spinner_base
-        add animated_spider_web.chart_labels at spinner_labels
-
-    textbutton "Return" action Return() xalign .99 yalign .99
-
-# Example Screen 4: Changing Values
-    
-# START
 label start:
+
+    # Data Setup
     python:
         # Create some dummy data to use in the Radar Charts        
         GRAPE_VALUE = 200
@@ -279,7 +190,14 @@ label start:
             size=200,
             values=[50, 50, 30, 50, 50, 50],
             max_value=50,
-            labels = [Text("Strength"), Text("Speed"), Text("Range"), Text("Durability"), Text("Precision"), Text("Potential")],
+            labels = [
+                Text("Strength"),
+                Text("Speed"),
+                Text("Range"),
+                Text("Durability"),
+                Text("Precision"),
+                Text("Potential")
+            ],
             data_colour=(165, 190, 0, 255),
             line_colour=(103, 148, 54, 255),
             background_colour=(88, 82, 74, 255),

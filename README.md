@@ -5,9 +5,10 @@ Ren'Py Displayable for plotting data onto a radar chart
 
 - radarchart.rpy: Contains the RadarChart classes. Drop this file into a Ren'Py project directory.
 - script.rpy: Usage examples.
+- example_screens.rpy: Example screens for the examples.
 
 ### Running the Demo
-Just drop script.rpy and radarchart.rpy into a new Ren'Py project's 'game' directory and try it out.
+Just drop script.rpy, example_screens.rpy, and radarchart.rpy into a new Ren'Py project's 'game' directory and try it out.
 
 ### Getting Started
 This guide assumes you have basic familiarity with Ren'Py labels and screens.
