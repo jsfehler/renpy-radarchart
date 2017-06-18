@@ -56,7 +56,7 @@ For example, if COOL_VALUE has increased:
     COOL_VALUE = 210
     rc.values = (COOL_VALUE, BEAUTY_VALUE, CUTE_VALUE, SMART_VALUE, TOUGH_VALUE)
 
-###Documentation
+### Documentation
 - class RadarChart
     - Arguments:
         - size (int): Width & height of the chart
@@ -96,7 +96,7 @@ For example, if COOL_VALUE has increased:
     - chart_labels.r_padding (int): Padding between the labels and chart for right-aligned labels
     - chart_labels.c_padding (int): Padding between the labels and chart for center-aligned labels
     
-###License & Usage
+### License & Usage
 The pretty icons used in the examples are from https://icons8.com/
 
 All the code is under the MIT license, just like Ren'Py. Do whatever you want with it.
