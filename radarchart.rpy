@@ -455,17 +455,17 @@ init -1500 python:
                 y_center = ya - (h * 0.5)
                 
                 # Left.
-                if xa < origin:
+                if xa - origin < -1:
                     px = xa - w - self.l_padding
                     py = y_center 
 
                 # Center Top.
-                elif xa == origin and ya == 0:
+                elif abs(xa - origin) <= 1 and ya <= 1:
                     px = x_center
                     py = ya - h - self.c_padding
 
                 # Center Bottom.
-                elif xa == origin and ya == round(self.size):
+                elif abs(xa - origin) <= 1 and abs(ya - self.size) <= 1:
                     px = x_center
                     py = ya + self.c_padding
 
