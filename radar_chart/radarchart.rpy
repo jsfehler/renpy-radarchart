@@ -1,286 +1,5 @@
-init -1500 python:
+init -999 python:
     import math
-
-    class Point2D(object):
-        """Stores x and y coordinates.
-
-        Args:
-            x (int): x-axis coordinate
-            y (int): y-axis coordinate
-
-        """
-        def __init__(self, x=0, y=0):
-            self.x = x
-            self.y = y
-
-        def __str__(self):
-            return "x:{}, y:{}".format(self.x, self.y)
-
-        def __add__(self, other):
-            return Point2D(self.x + other.x, self.y + other.y)
-
-        def __sub__(self, other):
-            return Point2D(self.x - other.x, self.y - other.y)
-
-        def rotate(self, angle):
-            """
-            Rotates the point around the x and y axis by 
-            the given angle in degrees.
-
-            Args:
-                angle (int): Degrees to rotate the point
-
-            Returns:
-                Point2D
-            """
-            rad = angle * math.pi / 180
-            cos_angle = math.cos(rad)
-            sin_angle = math.sin(rad)
-
-            x = self.y * sin_angle + self.x * cos_angle
-            y = self.y * cos_angle - self.x * sin_angle
-
-            return Point2D(x, y)
-
-
-    class BaseRadarChart(object):
-        """Contains all the logical calculations for a RadarChart.
-
-        This doesn't handle the actual drawing, 
-        just calculations for where to draw.
-
-        Args:
-            size (int): Width & height of the chart
-            values (list[int]): All the values to chart on the plot
-            max_value (int): The largest number a value should have
-            labels(list[displayable]): All the labels for each value
-            lines(dict): Properties for which lines to draw:
-                {
-                    "chart":True,
-                    "data":True                
-                    "spokes":True, 
-                    "webs":[int], # 1-9 allowed. represents 10%, 20%, etc
-                }
-            break_limit(bool): If any value can exceed max_value or not
-            
-        Raises:
-            ValueError: If labels is an empty list.
-        """
-        def __init__(self, size, values=None, max_value=0, labels=None,
-                lines={}, break_limit=True):
-
-            super(BaseRadarChart, self).__init__()
-
-            self.size = size
-            self._values = values
-            self.max_value = max_value
-            
-            self.labels = labels
-            if labels is not None:
-                if len(labels) <= 0:
-                    raise ValueError("Empty Label List provided.")
-
-            self.break_limit = break_limit
-
-            if not break_limit:
-                self._values = self.__validate_values()
-
-            # Point2D: Represents the center point of the chart.
-            self.origin = size * 0.5
-            self.origin_point = Point2D(self.origin, self.origin)
-
-            self.number_of_points = len(values)
-
-            # Dict: Default choices for drawing lines.
-            lines_defaults = {
-                "chart": True,
-                "data": True,
-                "spokes": True,
-                "webs": [],
-            }
-
-            # Update defaults with args.
-            lines_defaults.update(lines) 
-            self.lines = lines_defaults
-
-            # Path for the chart's background outline and polygon.
-            self._endpoints = self.__get_chart_endpoints(self.origin)
-            self.max_coordinates = self.__physical_coordinates(self._endpoints)
-            self.chart_polygon = self._build_path(self.max_coordinates)
-
-            # Path for the spokes going from the origin to each max_coordinate.
-            self.spokes = self._build_spokes()
-
-            # Only build path for the spider-web if required.
-            if self.lines.get("webs"):
-                self.web_points = self.__build_web_points()
-
-            # Generate the chart data from the values.
-            self._generate_chart_data()
-
-        def __build_web_points(self):
-            """
-            For every spider-web, create an outline path that's a 
-            fraction of the total size of the chart.
-
-            Returns:
-                list: List of paths for the inner web lines
-
-            Raises:
-                ValueError: If webs contain anything but integers 1-9, 
-                    or if it has any more than once.
-            """
-            webs = self.lines["webs"]
-
-            for item in webs:
-                if item < 1:
-                    raise ValueError("Lowest position possible is 1.")
-                if item > 9:
-                    raise ValueError("Can't use webs past the 9th position.")
-
-            if len(webs) != len(set(webs)):
-                raise ValueError("Can't use duplicate webs.")
-
-            rv = []
-            for item in webs:
-                radius = self.origin * (float(item) * 0.1)
-                endpoints = self.__get_chart_endpoints(radius)
-                phys_endpoints = self.__physical_coordinates(endpoints)
-                line = self._build_path(phys_endpoints)
-                rv.append(line)
-
-            return rv
-
-        def __validate_values(self):
-            """
-            Checks self._values for any value being above self.max_value,
-            and replaces it with self.max_value
-
-            Returns:
-                list
-            """
-            for index, value in enumerate(self._values):
-                if value > self.max_value:
-                    self._values[index] = self.max_value
-            return self._values
-
-        @property
-        def values(self):
-            return self._values
-
-        @values.setter
-        def values(self, val):
-            """Whenever new values are set, regenerate the chart data.
-            """
-            self._values = val
-            if not self.break_limit:
-                self._values = self.__validate_values()
-            self.number_of_points = len(self._values)
-            self._generate_chart_data()    
-
-        def __get_chart_endpoints(self, radius):
-            """
-            Take a circle and slice it based on the number of data points.
-            Each slice is turned into a Point2D.
-
-            Args:
-                radius (int): Circle's radius
-
-            Returns:
-                list: Every Point2D created.
-            """
-            slice = (2 * math.pi) / self.number_of_points
-
-            rv = []
-            for i in range(self.number_of_points):
-                angle = slice * i
-                nx = round(radius * math.sin(angle))
-                ny = round(radius * math.cos(angle))
-                p2d = Point2D(nx, ny)
-
-                # Correction for upside down chart display.
-                p2d = p2d.rotate(180)
-
-                rv.append(p2d)
-
-            return rv
-
-        def _values_to_percentage(self):
-            """Convert values from integer to percentage.
-
-            Builds new list from self.values, turning them into percentages 
-            based on the max_value.
-
-            Returns:
-                list: Percentage versions of the values.
-            """
-            max_value = float(self.max_value)
-
-            return [(float(value) / max_value) for value in self._values]
-
-        def __physical_coordinates(self, coords):
-            """
-            Returns:
-                list: Point2D coordinates relative to the origin point.
-            """
-            return [coord + self.origin_point for coord in coords] 
-
-        def _build_spokes(self):    
-            """Builds the path for the spokes inside the chart.
-            
-            A list of dict are created, one dict for each spoke's
-            start and end positions:
-            eg:
-                {
-                    "a": Point2D(x, y)
-                    "b": Point2D(x1, y1)
-                }
-
-            Returns:
-                list[dict]: Path for the spokes.
-            """   
-            return [
-                {"a":self.origin_point, "b":item} for item in self.max_coordinates
-            ]           
-
-        def _build_path(self, points):
-            """Creates the logical path for a set of points.
-
-            A list of dict are created, containing the 
-            (x,y) and (x1, y1) Point2D for each line.
-
-            Returns:
-                list[dict]: Path for a polygon.
-            """
-            # Create 2nd list for (x1, y1).
-            points_b = points[1:]
-            points_b += [points[0]]
-
-            return [
-                {"a": a, "b": b} for a, b in zip(points, points_b)
-            ]   
-
-        def _generate_chart_data(self):
-            """Perform all the steps necessary to create the chart data.
-            """
-            # Convert values to percentage.
-            c_values = self._values_to_percentage()
-
-            # Data physical location.
-            # endpoint * value percentage + origin = data location.
-            o = self.origin
-            values_length = [
-                Point2D(a.x * b + o, a.y * b + o) for a, b in zip(self._endpoints, c_values)
-            ]
-
-            # Path for the data plotted.
-            self.data_polygon = self._build_path(values_length)
-
-            # Path for the origin.
-            # Used to create animation effect.
-            self.start_points = [
-                {"a": self.origin_point} for point in self.data_polygon
-            ]
 
 
     class _RadarChartPolygon(renpy.Displayable):
@@ -404,7 +123,7 @@ init -1500 python:
     class _RadarChartLabels(renpy.Displayable):
         """Collection of labels for each data point.
 
-        For every data point, 
+        For every data point,
         take any displayable and place it as a label for the data.
 
         Args:
@@ -432,7 +151,7 @@ init -1500 python:
             if len(self.radar_chart.chart_polygon) != len(self.labels):
                 raise ValueError("Amount of labels given does not match amount of data points.")
 
-        def render(self, width, height, st, at):            
+        def render(self, width, height, st, at):
             render = renpy.Render(self.size, self.size)
 
             origin = round(self.radar_chart.origin)
@@ -453,11 +172,11 @@ init -1500 python:
 
                 x_center = xa - (w * 0.5)
                 y_center = ya - (h * 0.5)
-                
+
                 # Left.
                 if xa < origin:
                     px = xa - w - self.l_padding
-                    py = y_center 
+                    py = y_center
 
                 # Center Top.
                 elif xa == origin and ya == 0:
@@ -508,7 +227,7 @@ init -1500 python:
 
             data = self.radar_chart.data_polygon
             for n in range(len(self.points)):
-                render.place(self.points[n], x=data[n]["a"].x - w / 2, y=data[n]["a"].y - h / 2)     
+                render.place(self.points[n], x=data[n]["a"].x - w / 2, y=data[n]["a"].y - h / 2)
 
             return render
 
@@ -529,15 +248,15 @@ init -1500 python:
             visible (dict): Properties for which pieces of the RadarChart
                 should be visible:
                 {
-                    "base": True, 
+                    "base": True,
                     "data": True,
-                    "lines": True, 
-                    "points": True, 
+                    "lines": True,
+                    "points": True,
                     "labels": True
                 }
         """
-        def __init__(self, 
-            data_colour=(100, 200, 100, 125), 
+        def __init__(self,
+            data_colour=(100, 200, 100, 125),
             line_colour=(153, 153, 153, 255),
             background_colour=(255, 255, 255, 255),
             point=None, visible = {}, **kwargs):
@@ -550,17 +269,17 @@ init -1500 python:
             self.background_colour = color(background_colour)
 
             visible_defaults = {
-                "base": True, 
+                "base": True,
                 "data": True,
-                "lines": True, 
-                "points": True, 
+                "lines": True,
+                "points": True,
                 "labels": True
             }
 
             visible_defaults.update(visible)
             self.visible = visible_defaults
 
-            # Displayable for the points.      
+            # Displayable for the points.
             self.point = point
 
             # Group of point displayables, one for each point on the chart.
@@ -630,9 +349,9 @@ init -1500 python:
 
         def visit(self):
             return [
-                self.chart_base, 
-                self.chart_data, 
-                self.chart_lines, 
-                self.chart_points, 
+                self.chart_base,
+                self.chart_data,
+                self.chart_lines,
+                self.chart_points,
                 self.chart_labels
             ]
