@@ -1,9 +1,10 @@
 """renpy
 init -999 python:
 """
+from typing import Union
 
 
-class _RadarChartPolygon(renpy.Displayable):
+class PolygonDisplayable(renpy.Displayable):
     """Displayable to draw a polygon for the RadarChart.
 
     Args:
@@ -15,9 +16,10 @@ class _RadarChartPolygon(renpy.Displayable):
         radar_chart,
         colour: tuple[int, int, int, int],
         border=None,
+        points: Union[list[tuple[int, int]], None] = None,
         **kwargs,
     ):
-        super(_RadarChartPolygon, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
         self.radar_chart = radar_chart
 
@@ -26,17 +28,15 @@ class _RadarChartPolygon(renpy.Displayable):
 
         self.border = border
 
-        # Collect coordinates for a polygon into a list.
-        self._points = [
-            (point['a'].x, point['a'].y) for point in radar_chart.chart_polygon
-        ]
+        self.points = points
 
     @property
     def points(self):
+        """Coordinates for the polygon."""
         rv = self._points
         return rv
 
-    def render(self, width, height, st, at):
+    def render(self, width, height, st, at):  # NOQA: D102
         render = renpy.Render(self.size, self.size)
 
         shape = render.canvas()
@@ -47,8 +47,8 @@ class _RadarChartPolygon(renpy.Displayable):
 
         return render
 
-    def per_interact(self):
+    def per_interact(self):  # NOQA: D102
         renpy.redraw(self, 0)
 
-    def visit(self):
+    def visit(self):  # NOQA: D102
         return [self.border]

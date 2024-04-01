@@ -2,9 +2,8 @@ init -998 python:
     import math
 
 
-    class _RadarChartData(_RadarChartPolygon):
-        """Draws the polygon that represents the chart data.
-        """
+    class _RadarChartData(PolygonDisplayable):
+        """Draws the polygon that represents the chart data."""
         @property
         def points(self):
             """Rebuild the points list.
@@ -12,38 +11,6 @@ init -998 python:
             return [
                 (point['a'].x, point['a'].y) for point in self.radar_chart.data_polygon
             ]
-
-
-    class AALineDisplayable(renpy.Displayable):
-        """Displayable to draw an aaline.
-        """
-        def __init__(self, radar_chart, colour, lines, **kwargs):
-            super(AALineDisplayable, self).__init__(**kwargs)
-
-            self.radar_chart = radar_chart
-            self.size = radar_chart.size
-            self.colour = colour
-            self._lines = lines
-
-        @property
-        def lines(self):
-            return self._lines
-
-        def render(self, width, height, st, at):
-            render = renpy.Render(self.size, self.size)
-
-            shape = render.canvas()
-            for line in self.lines:
-                shape.aaline(
-                    self.colour,
-                    (line['a'].x, line['a'].y),
-                    (line['b'].x, line['b'].y)
-                )
-
-            return render
-
-        def per_interact(self):
-            renpy.redraw(self, 0)
 
 
     class _RadarChartDataBorder(AALineDisplayable):
@@ -250,7 +217,16 @@ init -998 python:
             if self.lines["chart"]:
                 chart_line = AALineDisplayable(self, line_colour, self.chart_polygon)
 
-            self.chart_base = _RadarChartPolygon(self, self.background_colour, border=chart_line)
+            _points = [
+                (point['a'].x, point['a'].y) for point in self.chart_polygon
+            ]
+
+            self.chart_base = PolygonDisplayable(
+                self,
+                self.background_colour,
+                border=chart_line,
+                points=_points,
+            )
 
             if self.lines["spokes"]:
                 line = AALineDisplayable(self, line_colour, self.spokes)
