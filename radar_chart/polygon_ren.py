@@ -28,7 +28,7 @@ class PolygonDisplayable(renpy.Displayable):
 
         self.border = border
 
-        self.points = points
+        self._points = points
 
     @property
     def points(self):
