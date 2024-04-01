@@ -162,11 +162,11 @@ class BaseRadarChart:
         Returns:
             list: Every Point2D created.
         """
-        slice = (2 * math.pi) / self.number_of_points
+        chart_slice = (2 * math.pi) / self.number_of_points
 
         rv = []
         for i in range(self.number_of_points):
-            angle = slice * i
+            angle = chart_slice * i
             nx = round(radius * math.sin(angle))
             ny = round(radius * math.cos(angle))
             p2d = Point2D(nx, ny)
