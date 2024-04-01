@@ -4,6 +4,7 @@ from .point_2d_ren import Point2D
 init -999 python:
 """
 import math
+from typing import Union
 
 
 class BaseRadarChart:
@@ -34,8 +35,8 @@ class BaseRadarChart:
         size: int,
         values: list[int],
         max_value: int = 0,
-        labels=None,
-        lines={},
+        labels: Union[list, None] = None,
+        lines: Union[dict[str, Union[bool, list[int]]], None] = None,
         break_limit: bool = True,
     ):
 
@@ -70,7 +71,8 @@ class BaseRadarChart:
         }
 
         # Update defaults with args.
-        lines_defaults.update(lines)
+        if lines:
+            lines_defaults.update(lines)
         self.lines = lines_defaults
 
         # Path for the chart's background outline and polygon.
