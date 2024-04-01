@@ -29,8 +29,15 @@ class BaseRadarChart:
     Raises:
         ValueError: If labels is an empty list.
     """
-    def __init__(self, size: int, values=None, max_value: int = 0, labels=None,
-            lines={}, break_limit: bool = True):
+    def __init__(
+        self,
+        size: int,
+        values: list[int],
+        max_value: int = 0,
+        labels=None,
+        lines={},
+        break_limit: bool = True,
+    ):
 
         super(BaseRadarChart, self).__init__()
 
@@ -114,7 +121,7 @@ class BaseRadarChart:
 
         return rv
 
-    def __validate_values(self):
+    def __validate_values(self) -> list[int]:
         """
         Checks self._values for any value being above self.max_value,
         and replaces it with self.max_value
@@ -132,16 +139,15 @@ class BaseRadarChart:
         return self._values
 
     @values.setter
-    def values(self, val):
-        """Whenever new values are set, regenerate the chart data.
-        """
+    def values(self, val: int):
+        """Whenever new values are set, regenerate the chart data."""
         self._values = val
         if not self.break_limit:
             self._values = self.__validate_values()
         self.number_of_points = len(self._values)
         self._generate_chart_data()
 
-    def __get_chart_endpoints(self, radius):
+    def __get_chart_endpoints(self, radius: int):
         """
         Take a circle and slice it based on the number of data points.
         Each slice is turned into a Point2D.
@@ -224,8 +230,7 @@ class BaseRadarChart:
         ]
 
     def _generate_chart_data(self):
-        """Perform all the steps necessary to create the chart data.
-        """
+        """Perform all the steps necessary to create the chart data."""
         # Convert values to percentage.
         c_values = self._values_to_percentage()
 
