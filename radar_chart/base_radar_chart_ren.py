@@ -3,8 +3,8 @@ from .point_2d_ren import Point2D
 """renpy
 init -999 python:
 """
-import math
-from typing import Union
+import math  # NOQA E402
+from typing import Union  # NOQA E402
 
 
 class BaseRadarChart:
