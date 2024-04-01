@@ -91,9 +91,7 @@ class BaseRadarChart:
         self._generate_chart_data()
 
     def __build_web_points(self):
-        """
-        For every spider-web, create an outline path that's a
-        fraction of the total size of the chart.
+        """Create an inner outline paths at each 10th of the chart.
 
         Returns:
             list: List of paths for the inner web lines
@@ -104,10 +102,13 @@ class BaseRadarChart:
         """
         webs = self.lines["webs"]
 
+        min_allowed = 1
+        max_allowed = 9
+
         for item in webs:
-            if item < 1:
+            if item < min_allowed:
                 raise ValueError("Lowest position possible is 1.")
-            if item > 9:
+            if item > max_allowed:
                 raise ValueError("Can't use webs past the 9th position.")
 
         if len(webs) != len(set(webs)):
@@ -124,9 +125,9 @@ class BaseRadarChart:
         return rv
 
     def __validate_values(self) -> list[int]:
-        """
-        Checks self._values for any value being above self.max_value,
-        and replaces it with self.max_value
+        """Check self._values for any value being above self.max_value.
+
+        Replace values above self.max_value with self.max_value
 
         Returns:
             list
@@ -138,6 +139,7 @@ class BaseRadarChart:
 
     @property
     def values(self):
+        """All the values to chart on the plot."""
         return self._values
 
     @values.setter
@@ -149,9 +151,9 @@ class BaseRadarChart:
         self.number_of_points = len(self._values)
         self._generate_chart_data()
 
-    def __get_chart_endpoints(self, radius: int):
-        """
-        Take a circle and slice it based on the number of data points.
+    def __get_chart_endpoints(self, radius: int) -> list:
+        """Take a circle and slice it based on the number of data points.
+
         Each slice is turned into a Point2D.
 
         Args:
@@ -190,7 +192,8 @@ class BaseRadarChart:
         return [(float(value) / max_value) for value in self._values]
 
     def __physical_coordinates(self, coords):
-        """
+        """Get physical coordinates.
+
         Returns:
             list: Point2D coordinates relative to the origin point.
         """
